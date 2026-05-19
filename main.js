@@ -81,6 +81,46 @@ function refreshStatus() {
     }
 }
 
+const EMOJI_POOL = ['❤️', '❤️', '❤️', '💖', '💕', '💗', '💓', '🐧'];
+let emilyActive = false;
+
+function spawnFloater(container) {
+    const el = document.createElement('div');
+    el.className = 'heart';
+    el.textContent = EMOJI_POOL[Math.floor(Math.random() * EMOJI_POOL.length)];
+    el.style.left = Math.random() * 100 + '%';
+    el.style.fontSize = (1.6 + Math.random() * 2) + 'rem';
+    el.style.animationDuration = (3.5 + Math.random() * 2.5) + 's';
+    el.style.animationDelay = (Math.random() * 0.4) + 's';
+    container.appendChild(el);
+    setTimeout(() => el.remove(), 6500);
+}
+
+function triggerEmilyEasterEgg() {
+    if (emilyActive) return;
+    emilyActive = true;
+    const overlay = document.getElementById('emily-overlay');
+    const hearts = document.getElementById('emily-hearts');
+    if (!overlay || !hearts) return;
+    overlay.hidden = false;
+    // Spawn a flurry of hearts continuously
+    for (let i = 0; i < 14; i++) spawnFloater(hearts);
+    const interval = setInterval(() => spawnFloater(hearts), 180);
+    say('My lover, my penguin, my best friend for life', { interrupt: true });
+
+    const dismiss = () => {
+        clearInterval(interval);
+        overlay.hidden = true;
+        hearts.innerHTML = '';
+        overlay.removeEventListener('click', dismiss);
+        emilyActive = false;
+        // Clear the word so it doesn't immediately retrigger
+        currentWord = '';
+    };
+    overlay.addEventListener('click', dismiss);
+    setTimeout(dismiss, 7000);
+}
+
 function syncCanvasToVideo() {
     const v = els.video;
     const wrap = v.parentElement;
@@ -173,6 +213,9 @@ function loop() {
         lastCommitted = current;
         cooldown = COOLDOWN_FRAMES;
         if (current === 'J' || current === 'Z') classifier.resetHistory();
+        if (currentWord.toUpperCase().endsWith('EMILY')) {
+            triggerEmilyEasterEgg();
+        }
     } else if (!current) {
         lastCommitted = null;
     }
