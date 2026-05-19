@@ -298,9 +298,14 @@ button.primary.recording {
     flex-direction: column;
     gap: 8px;
 }
-.compare-pane .video-wrap,
-.compare-pane .ref-img-wrap {
+.compare-pane .video-wrap {
     flex: 1 1 0;
+    min-height: 0;
+    min-width: 0;
+}
+.compare-pane .ref-img-wrap {
+    /* Image gets a slightly larger share so it's easy to read and copy. */
+    flex: 1.4 1 0;
     min-height: 0;
     min-width: 0;
 }
@@ -311,7 +316,7 @@ button.primary.recording {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 6px;
+    padding: 4px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.4);
 }
 #sign-img {
@@ -323,7 +328,7 @@ button.primary.recording {
     display: block;
 }
 #sign-img.missing { display: none; }
-.ref-img-wrap:has(#sign-img.missing) { display: none; }
+.ref-img-wrap.hidden-wrap { display: none; }
 
 /* Landscape: place reference image and camera side by side. */
 @media (orientation: landscape) and (min-width: 600px) {
