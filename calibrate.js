@@ -37,6 +37,7 @@ const els = {
     video:       document.getElementById('video'),
     canvas:      document.getElementById('overlay'),
     letter:      document.getElementById('letter'),
+    signImg:     document.getElementById('sign-img'),
     counter:     document.getElementById('counter'),
     hint:        document.getElementById('hint'),
     progress:    document.getElementById('progress'),
@@ -47,6 +48,31 @@ const els = {
     btnFinish:   document.getElementById('btn-finish'),
     btnClearAll: document.getElementById('btn-clear-all'),
 };
+
+// Tries signs/{LETTER}.png, then .jpg, then .svg. Hides the element if
+// no file exists. Drop images into web/signs/ — naming is uppercase letter.
+function loadSignImage(letter) {
+    if (!els.signImg) return;
+    els.signImg.classList.add('missing');
+    const exts = ['png', 'jpg', 'svg', 'webp'];
+    let i = 0;
+    const tryNext = () => {
+        if (i >= exts.length) {
+            els.signImg.removeAttribute('src');
+            els.signImg.classList.add('missing');
+            return;
+        }
+        const url = `signs/${letter}.${exts[i++]}`;
+        const probe = new Image();
+        probe.onload = () => {
+            els.signImg.src = url;
+            els.signImg.classList.remove('missing');
+        };
+        probe.onerror = tryNext;
+        probe.src = url;
+    };
+    tryNext();
+}
 
 let handLandmarker = null;
 let stream = null;
@@ -97,6 +123,7 @@ function showLetter() {
     els.letter.textContent = letter;
     els.hint.textContent = hint;
     els.counter.textContent = `${i + 1} / ${LETTERS.length}`;
+    loadSignImage(letter);
     const already = samples.y.includes(letter);
     els.status.textContent = already
         ? '(already calibrated — recording will overwrite)'

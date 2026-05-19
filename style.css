@@ -273,8 +273,9 @@ button.primary.recording {
 /* Calibration page */
 .cal-letter-row {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
+    gap: 12px;
     padding: 0 4px;
     flex-shrink: 0;
 }
@@ -283,10 +284,23 @@ button.primary.recording {
     font-weight: 800;
     color: #fde047;
     line-height: 1;
+    flex-shrink: 0;
 }
+#sign-img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    background: #fff;
+    border-radius: 8px;
+    padding: 4px;
+    flex-shrink: 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+#sign-img.missing { display: none; }
 #counter {
     font-size: 0.85rem;
     color: #9ca3af;
+    margin-left: auto;
 }
 #hint {
     font-size: 0.85rem;
