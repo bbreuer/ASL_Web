@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0e0e10">
+    <title>ASL Translator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>ASL Translator</h1>
+    </header>
+    <main>
+        <div class="video-wrap">
+            <video id="video" autoplay playsinline muted></video>
+            <canvas id="overlay"></canvas>
+            <div id="detected-overlay">
+                <div id="detected">–</div>
+                <div id="progress-bar"><div id="progress"></div></div>
+            </div>
+        </div>
+
+        <div id="text-display"><span id="text">&nbsp;</span></div>
+        <div id="status">Starting…</div>
+
+        <div class="controls">
+            <button id="btn-space">Space</button>
+            <button id="btn-back" aria-label="Backspace">⌫</button>
+            <button id="btn-clear">Clear</button>
+            <button id="btn-mute" aria-label="Mute">🔊</button>
+            <button id="btn-switch" aria-label="Switch camera">⇄ Cam</button>
+            <button id="btn-calibrate">Calibrate</button>
+        </div>
+    </main>
+    <script type="module" src="main.js"></script>
+</body>
+</html>
