@@ -81,6 +81,33 @@ function refreshStatus() {
     }
 }
 
+function syncCanvasToVideo() {
+    const v = els.video;
+    const wrap = v.parentElement;
+    const vw = v.videoWidth, vh = v.videoHeight;
+    const cw = wrap.clientWidth, ch = wrap.clientHeight;
+    if (!vw || !vh || !cw || !ch) return;
+    const vAspect = vw / vh;
+    const cAspect = cw / ch;
+    let dispW, dispH, offX = 0, offY = 0;
+    if (vAspect > cAspect) {
+        dispW = cw;
+        dispH = cw / vAspect;
+        offY = (ch - dispH) / 2;
+    } else {
+        dispH = ch;
+        dispW = ch * vAspect;
+        offX = (cw - dispW) / 2;
+    }
+    const c = els.canvas;
+    c.style.left = offX + 'px';
+    c.style.top = offY + 'px';
+    c.style.width = dispW + 'px';
+    c.style.height = dispH + 'px';
+    if (c.width !== vw) c.width = vw;
+    if (c.height !== vh) c.height = vh;
+}
+
 function drawLandmarks(landmarks, w, h) {
     const ctx = els.canvas.getContext('2d');
     ctx.clearRect(0, 0, w, h);
@@ -112,10 +139,6 @@ function loop() {
     }
 
     const vw = els.video.videoWidth, vh = els.video.videoHeight;
-    if (vw && (els.canvas.width !== vw || els.canvas.height !== vh)) {
-        els.canvas.width = vw;
-        els.canvas.height = vh;
-    }
 
     const now = performance.now();
     let results = null;
@@ -209,6 +232,13 @@ function wireButtons() {
     wireButtons();
     loadClassifier();
     refreshStatus();
+
+    els.video.addEventListener('loadedmetadata', syncCanvasToVideo);
+    window.addEventListener('resize', syncCanvasToVideo);
+    window.addEventListener('orientationchange', syncCanvasToVideo);
+    if (typeof ResizeObserver !== 'undefined') {
+        new ResizeObserver(syncCanvasToVideo).observe(els.video.parentElement);
+    }
 
     if (!isAvailable()) {
         els.btnMute.style.display = 'none';
