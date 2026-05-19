@@ -123,6 +123,27 @@ main {
     padding: 0 4px;
 }
 
+#audio-banner {
+    width: 100%;
+    background: #fde047;
+    color: #111;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+    animation: pulse 1.6s ease-in-out infinite;
+}
+#audio-banner:active { background: #facc15; }
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(253, 224, 71, 0.5); }
+    50%      { box-shadow: 0 0 0 10px rgba(253, 224, 71, 0); }
+}
+
 .controls {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

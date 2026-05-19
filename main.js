@@ -3,7 +3,10 @@ import { HandLandmarker, FilesetResolver }
 
 import { Classifier, KnnClassifier } from './classifier.js';
 import { HAND_CONNECTIONS, mirrorLandmarks } from './landmarks.js';
-import { say, toggleMute, installPrimer, isAvailable } from './speech.js';
+import {
+    say, toggleMute, installPrimer, unlockAudio,
+    onAudioState, isAvailable,
+} from './speech.js';
 
 const STABLE_FRAMES = 12;
 const COOLDOWN_FRAMES = 8;
@@ -15,6 +18,7 @@ const els = {
     progress:     document.getElementById('progress'),
     text:         document.getElementById('text'),
     status:       document.getElementById('status'),
+    audioBanner:  document.getElementById('audio-banner'),
     btnSpace:     document.getElementById('btn-space'),
     btnBack:      document.getElementById('btn-back'),
     btnClear:     document.getElementById('btn-clear'),
@@ -180,6 +184,9 @@ function wireButtons() {
         const m = toggleMute();
         els.btnMute.textContent = m ? '🔇' : '🔊';
     });
+    if (els.audioBanner) {
+        els.audioBanner.addEventListener('click', () => unlockAudio());
+    }
     els.btnSwitch.addEventListener('click', async () => {
         facingMode = facingMode === 'user' ? 'environment' : 'user';
         try { await startCamera(); } catch (e) { console.warn(e); }
@@ -203,7 +210,16 @@ function wireButtons() {
     loadClassifier();
     refreshStatus();
 
-    if (!isAvailable()) els.btnMute.style.display = 'none';
+    if (!isAvailable()) {
+        els.btnMute.style.display = 'none';
+        if (els.audioBanner) els.audioBanner.hidden = true;
+    } else {
+        onAudioState((s) => {
+            if (!els.audioBanner) return;
+            els.audioBanner.hidden = (s !== 'locked');
+            els.btnMute.textContent = s === 'muted' ? '🔇' : '🔊';
+        });
+    }
 
     try {
         await startCamera();
