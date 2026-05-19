@@ -37,6 +37,7 @@ const els = {
     video:       document.getElementById('video'),
     canvas:      document.getElementById('overlay'),
     letter:      document.getElementById('letter'),
+    signImg:     document.getElementById('sign-img'),
     counter:     document.getElementById('counter'),
     hint:        document.getElementById('hint'),
     progress:    document.getElementById('progress'),
@@ -47,6 +48,26 @@ const els = {
     btnFinish:   document.getElementById('btn-finish'),
     btnClearAll: document.getElementById('btn-clear-all'),
 };
+
+// Maps letter → "signs/ASL SHEET-NN.png" (A=01 … Z=26).
+function loadSignImage(letter) {
+    if (!els.signImg) return;
+    els.signImg.classList.add('missing');
+    const n = letter.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
+    if (n < 1 || n > 26) return;
+    const padded = String(n).padStart(2, '0');
+    const url = `signs/ASL%20SHEET-${padded}.png`;
+    const probe = new Image();
+    probe.onload = () => {
+        els.signImg.src = url;
+        els.signImg.classList.remove('missing');
+    };
+    probe.onerror = () => {
+        els.signImg.removeAttribute('src');
+        els.signImg.classList.add('missing');
+    };
+    probe.src = url;
+}
 
 let handLandmarker = null;
 let stream = null;
@@ -97,6 +118,7 @@ function showLetter() {
     els.letter.textContent = letter;
     els.hint.textContent = hint;
     els.counter.textContent = `${i + 1} / ${LETTERS.length}`;
+    loadSignImage(letter);
     const already = samples.y.includes(letter);
     els.status.textContent = already
         ? '(already calibrated — recording will overwrite)'
