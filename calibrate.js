@@ -49,29 +49,25 @@ const els = {
     btnClearAll: document.getElementById('btn-clear-all'),
 };
 
-// Tries signs/{LETTER}.png, then .jpg, then .svg. Hides the element if
-// no file exists. Drop images into web/signs/ — naming is uppercase letter.
+// Maps letter → "signs/ASL SHEET-NN.png" (A=01 … Z=26). Hides the
+// slot gracefully if the file is missing.
 function loadSignImage(letter) {
     if (!els.signImg) return;
     els.signImg.classList.add('missing');
-    const exts = ['png', 'jpg', 'svg', 'webp'];
-    let i = 0;
-    const tryNext = () => {
-        if (i >= exts.length) {
-            els.signImg.removeAttribute('src');
-            els.signImg.classList.add('missing');
-            return;
-        }
-        const url = `signs/${letter}.${exts[i++]}`;
-        const probe = new Image();
-        probe.onload = () => {
-            els.signImg.src = url;
-            els.signImg.classList.remove('missing');
-        };
-        probe.onerror = tryNext;
-        probe.src = url;
+    const n = letter.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
+    if (n < 1 || n > 26) return;
+    const padded = String(n).padStart(2, '0');
+    const url = `signs/ASL%20SHEET-${padded}.png`;
+    const probe = new Image();
+    probe.onload = () => {
+        els.signImg.src = url;
+        els.signImg.classList.remove('missing');
     };
-    tryNext();
+    probe.onerror = () => {
+        els.signImg.removeAttribute('src');
+        els.signImg.classList.add('missing');
+    };
+    probe.src = url;
 }
 
 let handLandmarker = null;
